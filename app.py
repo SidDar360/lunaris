@@ -45,7 +45,7 @@ def extractLinesFromPdf(pdfFilePath):
 # SETUP ------------------------------------------------------------------------
 #favicon = Image.open("/home/obiraj77/star/favicon.ico")
 st.set_page_config(
-    page_title="STAR: Revolutionizing Technical Standards with AI Using Llama 2 ",
+    page_title="Lunaris: NASA Standards Copilot",
     #page_icon=favicon,
     layout="wide",
     initial_sidebar_state="auto",
@@ -54,17 +54,15 @@ st.set_page_config(
 
 # Sidebar contents ------------------------------------------------------------------------
 with st.sidebar:
-    st.title("STAR - Revolutionizing Technical Standards with AI Using Llama 2")
+    st.title("Lunaris: NASA Standards Copilot")
     st.markdown(
         """
     ## About
-    This app is to Revolutionize Techincal Standards with AI (Llama 2 -powered), built using:
-    - [Streamlit](https://streamlit.io/)
-    - [Meta Llama 2 model](https://ai.meta.com/llama/) 
+    This app is designed by couple of high schoolers to assist in reviewing NASA Technical Standards for clarity, consistency, identifying and rectifying any ambiguities.
     """
     )
     st.write(
-        "Developed  by [Sid D](https://www.linkedin.com/in/sid-darapuram-259778275/) and [Karthik D]"
+        "Developed  by [Sid D](https://www.linkedin.com/in/sid-darapuram-259778275/) and [Karthik D](https://www.linkedin.com/in/karthik-darisi-68a896294/)"
     )
 
 
@@ -103,8 +101,8 @@ Title_html = """
     </style> 
     
     <div class="title">
-        <h1>Revolutionizing Technical Standards</h1>
-        <h2>Add more details here.........</h2
+        <h1>Lunaris: NASA Standards Copilot</h1>
+        <h2>Upload your standards file and get AI generated suggestions</h2>
     </div>
     """
 components.html(Title_html)
@@ -140,16 +138,16 @@ if uploaded_files is not None and len(uploaded_files) > 0:
         lineArray = extractLinesFromPdf(file_path)
         updated_lineArray = []
         
-        collection_name = "nasa_base"
-        fulltext = ""
-        context = db.get_context_documents(collection_name, "Get the gist of the document")
-        ds = db.splitText(str(context.page_content))
-        r = ""
-        for d in ds:
-            r += luna.prompt("", "Get the top 10 important points from " + str(d))
+        #collection_name = "nasa_base"
+        #fulltext = ""
+        #context = db.get_context_documents(collection_name, "Get the gist of the document")
+        #ds = db.splitText(str(context.page_content))
+        #r = ""
+        #for d in ds:
+        #    r += luna.prompt("", "Get the top 10 important points from " + str(d))
         #print(r)
         for line in lineArray:
-            updated_lineArray.append(luna.prompt(s_prompt=r, user_prompt = line))
+            updated_lineArray.append(luna.prompt(s_prompt="", user_prompt = line))
 
 
     if True: #st.button("Start Processing") or st.session_state.processing_button_clicked == True:
@@ -174,27 +172,27 @@ if uploaded_files is not None and len(uploaded_files) > 0:
                 for i in range(len(lineArray)):
                     tmpStr = lineArray[i].strip()
                     if (len(tmpStr) > 0):
-                        d.append({"beforText":lineArray[i], "afterText":lineArray[i], "aiSuggestion": updated_lineArray[i]})
+                        d.append({"Original Text":lineArray[i], "Editable Text":lineArray[i], "NASA Standards Copilot": updated_lineArray[i]})
                 return pd.DataFrame(d
                     # [
                     #     for i in range(len(lineArray)):
                     #         tmpStr = lineArray[i].strip()
                     #         if (len(tmpStr) > 0):
-                    #             {"beforText":lineArray[i], "afterText": lineArray[i], "apply_Selection": True},
-                    #     # {"beforText":lineArray[0], "afterText": lineArray[0], "apply_Selection": True},
-                    #     # {"beforText":lineArray[1], "afterText": lineArray[1], "apply_Selection": True},
-                    #     # {"beforText":lineArray[2], "afterText": lineArray[2], "apply_Selection": True},
-                    #     # {"beforText":lineArray[3], "afterText": lineArray[3], "apply_Selection": True},
-                    #     # {"beforText":lineArray[4], "afterText": lineArray[4], "apply_Selection": True},
-                    #     # {"beforText":lineArray[5], "afterText": lineArray[5], "apply_Selection": True},
+                    #             {"Original Text":lineArray[i], "Editable Text": lineArray[i], "apply_Selection": True},
+                    #     # {"Original Text":lineArray[0], "Editable Text": lineArray[0], "apply_Selection": True},
+                    #     # {"Original Text":lineArray[1], "Editable Text": lineArray[1], "apply_Selection": True},
+                    #     # {"Original Text":lineArray[2], "Editable Text": lineArray[2], "apply_Selection": True},
+                    #     # {"Original Text":lineArray[3], "Editable Text": lineArray[3], "apply_Selection": True},
+                    #     # {"Original Text":lineArray[4], "Editable Text": lineArray[4], "apply_Selection": True},
+                    #     # {"Original Text":lineArray[5], "Editable Text": lineArray[5], "apply_Selection": True},
                     # ]
                 )
 
             df = load_data()
             edited_df = st.data_editor(df, use_container_width = True,column_config = {
-                "beforeText": st.column_config.TextColumn(width="large"),
-                "afterText": st.column_config.TextColumn(),
-                "aiSuggestion": st.column_config.TextColumn(),
+                "before Text": st.column_config.TextColumn(width="large"),
+                "Editable Text": st.column_config.TextColumn(),
+                "NASA Standards Copilot": st.column_config.TextColumn(),
             })
             #st.table(df)
             #edited_df = st.data_editor(df, column_config={
@@ -213,7 +211,7 @@ if uploaded_files is not None and len(uploaded_files) > 0:
 
 
         #st.snow()
-        #edited_df = edited_df[(edited_df["apply_Selection"] ==True)] # & (edited_df["beforText"] != edited_df["afterText"])]
+        #edited_df = edited_df[(edited_df["apply_Selection"] ==True)] # & (edited_df["Original Text"] != edited_df["Editable Text"])]
 
 
         beforeArr = []
@@ -221,11 +219,11 @@ if uploaded_files is not None and len(uploaded_files) > 0:
 
         #print("This is the length of the edited dtatafram: " + str(len(edited_df)))
         for i in range(len(edited_df)):
-            fmatStr = edited_df.loc[i, "beforText"].lstrip().rstrip()
-            fmatAfterStr = edited_df.loc[i, "afterText"].lstrip().rstrip()
+            fmatStr = edited_df.loc[i, "Original Text"].lstrip().rstrip()
+            fmatAfterStr = edited_df.loc[i, "Editable Text"].lstrip().rstrip()
             #print(len(fmatStr))
             #print(fmatStr)
-            if (fmatStr != "" and (edited_df.loc[i, "beforText"] != edited_df.loc[i, "afterText"])):
+            if (fmatStr != "" and (edited_df.loc[i, "Original Text"] != edited_df.loc[i, "Editable Text"])):
                 # now identify words changed
                 print(fmatStr)
                 print(fmatAfterStr)
@@ -237,7 +235,7 @@ if uploaded_files is not None and len(uploaded_files) > 0:
                         afterArr.append(fmatAfterStrArr[i]) 
 
 
-            #print(edited_df.loc[i, "beforText"], edited_df.loc[i, "afterText"], edited_df.loc[i, "apply_Selection"])
+            #print(edited_df.loc[i, "Original Text"], edited_df.loc[i, "Editable Text"], edited_df.loc[i, "apply_Selection"])
         print("pring array versions of changes in######################")
         print(beforeArr)
         print(afterArr)
@@ -255,7 +253,7 @@ if uploaded_files is not None and len(uploaded_files) > 0:
 
         if st.button("Apply Changes"):
             # Call the aspos cloud code to update pdf
-            # print(edited_df["beforText"])
+            # print(edited_df["Original Text"])
             updatedFileName = updatePdf(file_path, beforeArr, afterArr)
             st.write(updatedFileName)
 
@@ -267,7 +265,7 @@ if uploaded_files is not None and len(uploaded_files) > 0:
 
         # for i in range(len(edited_df)):
         #     #if(edited_df.loc[i, "apply_Selection"] == True):
-        #     print(edited_df.loc[i, "beforText"], edited_df.loc[i, "afterText"], edited_df.loc[i, "apply_Selection"])
+        #     print(edited_df.loc[i, "Original Text"], edited_df.loc[i, "Editable Text"], edited_df.loc[i, "apply_Selection"])
         # row0_toggle = edited_df.loc[0, "apply_Selection"]
         # st.markdown(f"Row 0 is  **{row0_toggle}** 🎈")
         # row1_toggle = edited_df.loc[1, "apply_Selection"]
@@ -292,13 +290,9 @@ if uploaded_files is not None and len(uploaded_files) > 0:
         # if confirm_changes_btn:
         #     for i in range(len(edited_df)):
         #         if(edited_df.loc[i, "apply_Selection"] == True):
-        #             print(edited_df.loc[i, "beforText"], edited_df.loc[i, "afterText"], edited_df.loc[i, "apply_Selection"])
+        #             print(edited_df.loc[i, "Original Text"], edited_df.loc[i, "Editable Text"], edited_df.loc[i, "apply_Selection"])
         #         # else:
         #         #     edited_df = data.drop(0)
         #     edited_df = edited_df.loc[edited_df["apply_Selection"] ==True]
         #     st.table(edited_df)
-
-   
-
-
 
